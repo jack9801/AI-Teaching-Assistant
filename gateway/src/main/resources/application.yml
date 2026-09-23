@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 spring:
   application:
     name: ai-teaching-assistant-gateway
@@ -12,6 +12,7 @@ spring:
 app:
   worker:
     base-url: ${WORKER_BASE_URL:http://localhost:8000}
+    shared-secret: ${WORKER_SHARED_SECRET:}
     connect-timeout-ms: 1500
     response-timeout-seconds: 25
   cors:
