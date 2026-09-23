@@ -6,4 +6,4 @@ COPY main.py .
 COPY agent ./agent
 RUN pip install --upgrade pip && pip install .[test]
 EXPOSE 8000
-CMD ["uvicorn","main:app","--host","0.0.0.0","--port","8000","--loop","uvloop"]
+CMD ["sh","-c","uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --loop uvloop"]
