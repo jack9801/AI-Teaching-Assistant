@@ -4,13 +4,15 @@ services:
     runtime: docker
     plan: free
     rootDir: worker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: Dockerfile
     healthCheckPath: /health
     envVars:
       - key: LLM_ENABLED
         value: false
       - key: LLM_MODEL
         value: claude-3-5-sonnet-20241022
+      - key: WORKER_SHARED_SECRET
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
@@ -21,14 +23,13 @@ services:
     runtime: docker
     plan: free
     rootDir: gateway
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: Dockerfile
     healthCheckPath: /actuator/health
     envVars:
       - key: WORKER_BASE_URL
-        fromService:
-          type: web
-          name: ai-teaching-worker
-          property: hostport
+        value: https://ai-teaching-worker.onrender.com
+      - key: WORKER_SHARED_SECRET
+        sync: false
       - key: REDIS_HOST
         fromService:
           type: keyvalue
