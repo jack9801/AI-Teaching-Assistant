@@ -5,25 +5,32 @@ services:
     restart: unless-stopped
     volumes:
       - redis-data:/data
+
   worker:
     build: ./worker
     environment:
       LLM_ENABLED: ${LLM_ENABLED:-false}
-      LLM_MODEL: ${LLM_MODEL:-claude-3-5-sonnet-20241022}
+      LLM_MODEL: ${LLM_MODEL:-anthropic/claude-3-5-sonnet-20241022}
+      WORKER_SHARED_SECRET: ${WORKER_SHARED_SECRET:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-    expose: ["8000"]
+    expose:
+      - "8000"
     restart: unless-stopped
+
   gateway:
     build: ./gateway
     environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_URL: redis://redis:6379
       WORKER_BASE_URL: http://worker:8000
+      WORKER_SHARED_SECRET: ${WORKER_SHARED_SECRET:-}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080}
-    depends_on: [redis, worker]
-    ports: ["8080:8080"]
+    depends_on:
+      - redis
+      - worker
+    ports:
+      - "8080:8080"
     restart: unless-stopped
+
 volumes:
   redis-data:
