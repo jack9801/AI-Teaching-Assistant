@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: ai-teaching-worker
+    runtime: docker
+    plan: free
+    rootDir: worker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: LLM_ENABLED
+        value: false
+      - key: LLM_MODEL
+        value: claude-3-5-sonnet-20241022
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  - type: web
+    name: ai-teaching-gateway
+    runtime: docker
+    plan: free
+    rootDir: gateway
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: WORKER_BASE_URL
+        fromService:
+          type: web
+          name: ai-teaching-worker
+          property: hostport
+      - key: REDIS_HOST
+        fromService:
+          type: keyvalue
+          name: ai-teaching-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: keyvalue
+          name: ai-teaching-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: keyvalue
+          name: ai-teaching-redis
+          property: password
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://ai-teaching-gateway.onrender.com
+
+  - type: keyvalue
+    name: ai-teaching-redis
+    plan: free
+    ipAllowList: []
