@@ -9,7 +9,7 @@ spring:
       timeout: 2s
 app:
   worker:
-    base-url: ${WORKER_BASE_URL:http://localhost:8000}
+    base-url: http://${WORKER_HOSTPORT:localhost:8000}
     shared-secret: ${WORKER_SHARED_SECRET:}
     connect-timeout-ms: 1500
     response-timeout-seconds: 90
