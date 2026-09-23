@@ -3,6 +3,7 @@ services:
     name: ai-teaching-worker
     runtime: docker
     plan: free
+    region: oregon
     rootDir: worker
     dockerfilePath: Dockerfile
     healthCheckPath: /health
@@ -22,12 +23,16 @@ services:
     name: ai-teaching-gateway
     runtime: docker
     plan: free
+    region: oregon
     rootDir: gateway
     dockerfilePath: Dockerfile
     healthCheckPath: /actuator/health
     envVars:
-      - key: WORKER_BASE_URL
-        value: https://ai-teaching-worker.onrender.com
+      - key: WORKER_HOSTPORT
+        fromService:
+          type: web
+          name: ai-teaching-worker
+          property: hostport
       - key: WORKER_SHARED_SECRET
         fromService:
           type: web
@@ -44,5 +49,6 @@ services:
   - type: keyvalue
     name: ai-teaching-redis
     plan: free
+    region: oregon
     ipAllowList: []
     maxmemoryPolicy: allkeys-lru
