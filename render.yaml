@@ -10,9 +10,9 @@ services:
       - key: LLM_ENABLED
         value: false
       - key: LLM_MODEL
-        value: claude-3-5-sonnet-20241022
+        value: anthropic/claude-3-5-sonnet-20241022
       - key: WORKER_SHARED_SECRET
-        sync: false
+        generateValue: true
       - key: OPENAI_API_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
@@ -29,22 +29,15 @@ services:
       - key: WORKER_BASE_URL
         value: https://ai-teaching-worker.onrender.com
       - key: WORKER_SHARED_SECRET
-        sync: false
-      - key: REDIS_HOST
+        fromService:
+          type: web
+          name: ai-teaching-worker
+          envVarKey: WORKER_SHARED_SECRET
+      - key: REDIS_URL
         fromService:
           type: keyvalue
           name: ai-teaching-redis
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          type: keyvalue
-          name: ai-teaching-redis
-          property: port
-      - key: REDIS_PASSWORD
-        fromService:
-          type: keyvalue
-          name: ai-teaching-redis
-          property: password
+          property: connectionString
       - key: CORS_ALLOWED_ORIGINS
         value: https://ai-teaching-gateway.onrender.com
 
@@ -52,3 +45,4 @@ services:
     name: ai-teaching-redis
     plan: free
     ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
