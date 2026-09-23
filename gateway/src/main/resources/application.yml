@@ -5,9 +5,7 @@ spring:
     name: ai-teaching-assistant-gateway
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      url: ${REDIS_URL:redis://localhost:6379}
       timeout: 2s
 app:
   worker:
