@@ -6,7 +6,6 @@ import uuid
 from typing import Literal, TypedDict
 
 from langgraph.graph import END, StateGraph
-from litellm import completion
 
 from .prompts import SAFETY_BLOCK_MESSAGE, SOCRATIC_SYSTEM_PROMPT
 from .solver import StepEvaluation, extract_latest_equation, verify_step
@@ -121,6 +120,8 @@ def _llm_response(state: TutorState) -> tuple[str, str]:
         "Return exactly <teacher_thoughts>...</teacher_thoughts>"
         " followed by <teacher_response>...</teacher_response>."
     )
+
+    from litellm import completion
 
     result = completion(
         model=model,
